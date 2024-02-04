@@ -1,34 +1,35 @@
 package ru.javawebinar.topjava.storage;
 
 import ru.javawebinar.topjava.model.Meal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static ru.javawebinar.topjava.util.MealsUtil.MEALS;
+import static ru.javawebinar.topjava.util.MealsUtil.mealList;
 
-public class MealStorageImpl implements MealStorage {
-    private final AtomicInteger index = new AtomicInteger(0);
+public class MemoryMealStorage implements MealStorage {
+    private final AtomicInteger counter = new AtomicInteger(0);
     private final Map<Integer, Meal> storage = new ConcurrentHashMap<>();
 
-    public MealStorageImpl() {
-        MEALS.forEach(this::save);
+    public MemoryMealStorage() {
+        mealList.forEach(this::save);
     }
 
     @Override
-    public void save(Meal meal) {
+    public Meal save(Meal meal) {
         if (meal.getId() == null) {
-            meal.setId(index.incrementAndGet());
+            meal.setId(counter.incrementAndGet());
             storage.put(meal.getId(), meal);
-            return;
+            return meal;
         }
-        storage.computeIfPresent(meal.getId(), (id, old) -> meal);
+        return storage.computeIfPresent(meal.getId(), (id, old) -> meal);
     }
 
     @Override
-    public Meal get(Integer id) {
+    public Meal get(int id) {
         return storage.get(id);
     }
 
@@ -38,7 +39,7 @@ public class MealStorageImpl implements MealStorage {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
         storage.remove(id);
     }
 }

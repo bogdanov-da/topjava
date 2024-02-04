@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.storage.MealStorage;
-import ru.javawebinar.topjava.storage.MealStorageImpl;
+import ru.javawebinar.topjava.storage.MemoryMealStorage;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletException;
@@ -16,6 +16,7 @@ import java.time.LocalTime;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.util.MealsUtil.*;
+import static ru.javawebinar.topjava.util.TimeUtil.getFormattedLocalDateTime;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
@@ -23,7 +24,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void init() {
-        mealStorage = new MealStorageImpl();
+        mealStorage = new MemoryMealStorage();
         log.info("init");
     }
 
@@ -40,7 +41,7 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "edit":
                 id = req.getParameter("id");
-                Meal meal = "create".equals(action) ? new Meal(LocalDateTime.now(), "", 0) : mealStorage.get(parseId(id));
+                Meal meal = "create".equals(action) ? new Meal(getFormattedLocalDateTime(LocalDateTime.now()), "", 0) : mealStorage.get(parseId(id));
                 req.setAttribute("meal", meal);
                 req.getRequestDispatcher("/meal.jsp").forward(req, resp);
                 log.info("Meal {} " + action, id);
