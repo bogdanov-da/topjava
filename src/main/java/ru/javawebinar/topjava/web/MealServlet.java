@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.util.MealsUtil.*;
-import static ru.javawebinar.topjava.util.TimeUtil.getFormattedLocalDateTime;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
@@ -41,15 +41,17 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "edit":
                 id = req.getParameter("id");
-                Meal meal = "create".equals(action) ? new Meal(getFormattedLocalDateTime(LocalDateTime.now()), "", 0) : mealStorage.get(parseId(id));
+                Meal meal = "create".equals(action) ? new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
+                        "", 0) : mealStorage.get(parseId(id));
                 req.setAttribute("meal", meal);
                 req.getRequestDispatcher("/meal.jsp").forward(req, resp);
-                log.info("Meal {} " + action, id);
+                log.info("Meal {} {}", id == null ? "new" : id, action);
                 break;
             default:
-                req.setAttribute("meals", MealsUtil.filteredByStreams(mealStorage.getAll(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY));
+                req.setAttribute("meals", MealsUtil.filteredByStreams(mealStorage.getAll(), LocalTime.MIN,
+                        LocalTime.MAX, CALORIES_PER_DAY));
                 req.getRequestDispatcher("/meals.jsp").forward(req, resp);
-                log.info("get all");
+                log.info("Get all meals");
                 break;
         }
     }
