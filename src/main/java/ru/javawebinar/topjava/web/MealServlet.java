@@ -41,8 +41,8 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "edit":
                 id = req.getParameter("id");
-                Meal meal = "create".equals(action) ? new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-                        "", 0) : mealStorage.get(parseId(id));
+                Meal meal = "create".equals(action) ? new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),"", 0) :
+                        mealStorage.get(parseId(id));
                 req.setAttribute("meal", meal);
                 req.getRequestDispatcher("/meal.jsp").forward(req, resp);
                 log.info("Meal {} {}", id == null ? "new" : id, action);
