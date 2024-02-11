@@ -5,9 +5,11 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.getEndDateExcluded;
+import static ru.javawebinar.topjava.util.DateTimeUtil.getStartDateIncluded;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -31,14 +33,14 @@ public class MealService {
     }
 
     public List<Meal> getAll(int userId) {
-        return (List<Meal>) repository.getAll(userId);
+        return new ArrayList<>(repository.getAll(userId));
     }
 
     public void update(Meal meal, int userId) {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
-    public List<Meal> filterDates(int authUserId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return (List<Meal>) repository.filterDates(authUserId, startDate, endDate, startTime, endTime);
+    public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        return new ArrayList<>(repository.getFiltered(userId, getStartDateIncluded(startDate), getEndDateExcluded(endDate)));
     }
 }

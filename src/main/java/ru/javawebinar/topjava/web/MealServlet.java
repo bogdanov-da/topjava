@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -65,7 +66,7 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("dates filtered");
-                request.setAttribute("meals", mealRestController.filterDates(getDate(request, "startDate"),
+                request.setAttribute("meals", mealRestController.getFiltered(getDate(request, "startDate"),
                         getDate(request, "endDate"), getTime(request, "startTime"), getTime(request, "endTime")));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
@@ -90,11 +91,11 @@ public class MealServlet extends HttpServlet {
 
     private LocalDate getDate(HttpServletRequest request, String parameter) {
         String param = request.getParameter(parameter);
-        return param == null || "".equals(param) ? LocalDate.MIN : LocalDate.parse(param);
+        return StringUtils.hasLength(param) ? LocalDate.parse(param) : null;
     }
 
     private LocalTime getTime(HttpServletRequest request, String parameter) {
         String param = request.getParameter(parameter);
-        return param == null || "".equals(param) ? LocalTime.MIN : LocalTime.parse(param);
+        return StringUtils.hasLength(param) ? LocalTime.parse(param) : null;
     }
 }
