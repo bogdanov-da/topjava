@@ -5,7 +5,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.getEndDateExcluded;
@@ -33,7 +32,7 @@ public class MealService {
     }
 
     public List<Meal> getAll(int userId) {
-        return new ArrayList<>(repository.getAll(userId));
+        return repository.getAll(userId);
     }
 
     public void update(Meal meal, int userId) {
@@ -41,6 +40,6 @@ public class MealService {
     }
 
     public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
-        return new ArrayList<>(repository.getFiltered(userId, getStartDateIncluded(startDate), getEndDateExcluded(endDate)));
+        return repository.getFiltered(userId, getStartDateIncluded(startDate), getEndDateExcluded(endDate));
     }
 }
