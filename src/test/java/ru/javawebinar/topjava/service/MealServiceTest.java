@@ -102,6 +102,6 @@ public class MealServiceTest {
         LocalDate startDate = LocalDate.of(2020, 1, 31);
         LocalDate endDate = LocalDate.of(2020, 2, 1);
         List<Meal> actual = service.getBetweenInclusive(startDate, endDate, USER_ID);
-        assertMatch(actual, userMeals.subList(0, 4));
+        assertMatch(actual, userMealsSublist);
     }
 }

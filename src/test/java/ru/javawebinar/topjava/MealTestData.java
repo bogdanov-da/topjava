@@ -24,6 +24,8 @@ public class MealTestData {
 
     public static final List<Meal> userMeals = Arrays.asList(userMeal7, userMeal6, userMeal5, userMeal4, userMeal3, userMeal2, userMeal1);
 
+    public static final List<Meal> userMealsSublist = Arrays.asList(userMeal7, userMeal6, userMeal5, userMeal4);
+
     public static Meal getNew() {
         return new Meal(null, LocalDateTime.of(2020, Month.JUNE, 1, 21, 0), "New meal", 500);
     }
@@ -37,10 +39,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingRecursiveComparison().ignoringFields("id").isEqualTo(expected);
-    }
-
-    public static void assertMatch2(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingRecursiveFieldByFieldElementComparatorIgnoringFields("id").isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }
