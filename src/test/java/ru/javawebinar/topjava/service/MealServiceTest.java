@@ -1,7 +1,8 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -14,7 +15,10 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
+import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -26,8 +30,25 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
 public class MealServiceTest {
+    private static final Logger log = getLogger("result");
+
+    private static final StringBuilder results = new StringBuilder();
+
+    @Rule
+    public final Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            String result = String.format(description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            results.append(result);
+            log.info(result);
+        }
+    };
+
+    @AfterClass
+    public static void afterClass() {
+        log.info(results.toString());
+    }
 
     @Autowired
     private MealService service;
