@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MealRepository {
     default Meal getWithUser(int id, int userId) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     // null if updated meal does not belong to userId

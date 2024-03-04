@@ -11,13 +11,13 @@ import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 
 @Profile(POSTGRES_DB)
 @Repository
-public class PostgresJdbcMealRepository extends JdbcMealRepository<LocalDateTime>{
+public class PostgresJdbcMealRepository extends JdbcMealRepository<LocalDateTime> {
     public PostgresJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @Override
-    protected LocalDateTime selectDateTimeFormat(LocalDateTime localDateTime) {
+    protected LocalDateTime convertDateTimeFormat(LocalDateTime localDateTime) {
         return localDateTime;
     }
 }

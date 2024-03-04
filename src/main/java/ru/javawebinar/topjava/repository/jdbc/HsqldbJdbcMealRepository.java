@@ -12,13 +12,13 @@ import static ru.javawebinar.topjava.Profiles.HSQL_DB;
 
 @Profile(HSQL_DB)
 @Repository
-public class HSQLDBJdbcMealRepository extends JdbcMealRepository<Timestamp>{
-    public HSQLDBJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+public class HsqldbJdbcMealRepository extends JdbcMealRepository<Timestamp> {
+    public HsqldbJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @Override
-    protected Timestamp selectDateTimeFormat(LocalDateTime localDateTime) {
+    protected Timestamp convertDateTimeFormat(LocalDateTime localDateTime) {
         return Timestamp.valueOf(localDateTime);
     }
 }

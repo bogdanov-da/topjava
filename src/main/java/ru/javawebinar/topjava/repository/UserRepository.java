@@ -5,8 +5,8 @@ import ru.javawebinar.topjava.model.User;
 import java.util.List;
 
 public interface UserRepository {
-    default User getWithMeal(int id) {
-        throw new RuntimeException();
+    default User getWithMeals(int id) {
+        throw new UnsupportedOperationException();
     }
 
     // null if not found, when updated
