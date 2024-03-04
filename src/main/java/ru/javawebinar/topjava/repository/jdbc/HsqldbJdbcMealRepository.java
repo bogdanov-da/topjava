@@ -18,7 +18,7 @@ public class HsqldbJdbcMealRepository extends JdbcMealRepository<Timestamp> {
     }
 
     @Override
-    protected Timestamp convertDateTimeFormat(LocalDateTime localDateTime) {
+    protected Timestamp convertDateTime(LocalDateTime localDateTime) {
         return Timestamp.valueOf(localDateTime);
     }
 }
