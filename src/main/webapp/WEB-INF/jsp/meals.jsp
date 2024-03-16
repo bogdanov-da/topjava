@@ -6,8 +6,10 @@
 <head>
     <title>Meals</title>
     <link rel="stylesheet" href="css/style.css">
+    <jsp:include page="fragments/headTag.jsp"/>
 </head>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h3><a href="index.jsp">Home</a></h3>
     <hr/>
