@@ -9,6 +9,13 @@ import javax.validation.*;
 import java.util.Set;
 
 public class ValidationUtil {
+    private static final Validator validator;
+
+    static {
+        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            validator = validatorFactory.getValidator();
+        }
+    }
 
     private ValidationUtil() {
     }
@@ -56,7 +63,7 @@ public class ValidationUtil {
     }
 
     public static <T> void catchConstraintViolations(T bean) {
-        Set<ConstraintViolation<T>> constraintViolations = Validation.buildDefaultValidatorFactory().getValidator().validate(bean);
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate(bean);
         if (!constraintViolations.isEmpty()) {
             throw new ConstraintViolationException(constraintViolations);
         }
