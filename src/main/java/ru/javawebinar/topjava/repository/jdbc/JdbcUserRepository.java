@@ -16,6 +16,7 @@ import ru.javawebinar.topjava.repository.UserRepository;
 import java.util.*;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static ru.javawebinar.topjava.util.ValidationUtil.catchConstraintViolations;
 
 @Repository
 @Transactional(readOnly = true)
@@ -42,22 +43,22 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
+        catchConstraintViolations(user);
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-            insertRoles(user);
         } else {
             if (namedParameterJdbcTemplate.update("""
-                   UPDATE users SET name=:name, email=:email, password=:password,
-                   registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0) {
+                       UPDATE users SET name=:name, email=:email, password=:password,
+                       registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
+                    """, parameterSource) == 0) {
                 return null;
             }
             deleteRoles(user);
-            insertRoles(user);
         }
+        insertRoles(user);
         return user;
     }
 
@@ -82,12 +83,12 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public List<User> getAll() {
         List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
-        Map<Integer, Set<Role>> map = new HashMap<>();
+        Map<Integer, Set<Role>> userRoles = new HashMap<>();
         jdbcTemplate.query("SELECT * FROM user_role", resultSet -> {
-            map.computeIfAbsent(resultSet.getInt("user_id"), userId -> EnumSet.noneOf(Role.class))
+            userRoles.computeIfAbsent(resultSet.getInt("user_id"), userId -> EnumSet.noneOf(Role.class))
                     .add(Role.valueOf(resultSet.getString("role")));
         });
-        users.forEach(user -> user.setRoles(map.get(user.getId())));
+        users.forEach(user -> user.setRoles(userRoles.get(user.getId())));
         return users;
     }
 
@@ -102,12 +103,12 @@ public class JdbcUserRepository implements UserRepository {
         }
     }
 
-    private void deleteRoles(User user){
+    private void deleteRoles(User user) {
         jdbcTemplate.update("DELETE  FROM user_role WHERE user_id=?", user.getId());
     }
 
-    private User setRoles(User user){
-        if (user != null){
+    private User setRoles(User user) {
+        if (user != null) {
             List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_role WHERE user_id=?", Role.class, user.getId());
             user.setRoles(roles);
         }

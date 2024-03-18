@@ -1,15 +1,15 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import org.hibernate.jpa.QueryHints;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @Transactional(readOnly = true)
@@ -62,16 +62,9 @@ public class JpaUserRepository implements UserRepository {
     public User getByEmail(String email) {
         List<User> users = em.createNamedQuery(User.BY_EMAIL, User.class)
                 .setParameter(1, email)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
-        User user = new User();
-        for (User u : users) {
-            if (user.isNew()) {
-                user = u;
-            }
-            Set<Role> roles = user.getRoles();
-            roles.addAll(u.getRoles());
-        }
-        return user;
+        return DataAccessUtils.singleResult(users);
     }
 
     @Override
