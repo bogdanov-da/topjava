@@ -90,6 +90,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_WITH_MEAL_MATCHER.contentJson(admin));
+                .andExpect(USER_WITH_MEAL_MATCHER.contentJson(adminWithMeals));
     }
 }

@@ -2,11 +2,12 @@ package ru.javawebinar.topjava.to;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.javawebinar.topjava.model.AbstractBaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public class MealTo extends AbstractBaseEntity {
+public class MealTo {
+    private final Integer id;
 
     private final LocalDateTime dateTime;
 
@@ -17,13 +18,19 @@ public class MealTo extends AbstractBaseEntity {
     private final boolean excess;
 
     @JsonCreator
-    public MealTo(@JsonProperty("id") Integer id, @JsonProperty("dateTime") LocalDateTime dateTime, @JsonProperty("description") String description,
-                  @JsonProperty("calories") int calories, @JsonProperty("excess") boolean excess) {
-        super(id);
+    public MealTo(@JsonProperty("id") Integer id, @JsonProperty("dateTime") LocalDateTime dateTime,
+                  @JsonProperty("description") String description, @JsonProperty("calories") int calories,
+                  @JsonProperty("excess") boolean excess)
+    {
+        this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = excess;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public LocalDateTime getDateTime() {
@@ -40,6 +47,18 @@ public class MealTo extends AbstractBaseEntity {
 
     public boolean isExcess() {
         return excess;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MealTo mealTo = (MealTo) o;
+        return calories == mealTo.calories &&
+                excess == mealTo.excess &&
+                Objects.equals(id, mealTo.id) &&
+                Objects.equals(dateTime, mealTo.dateTime) &&
+                Objects.equals(description, mealTo.description);
     }
 
     @Override
