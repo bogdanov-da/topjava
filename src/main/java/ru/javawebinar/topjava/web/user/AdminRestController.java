@@ -63,7 +63,7 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @Override
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(@PathVariable int id, @RequestParam(required = false) boolean isEnabled) {
         super.enable(id, isEnabled);
