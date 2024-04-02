@@ -113,6 +113,12 @@ public class JdbcUserRepository implements UserRepository {
         jdbcTemplate.update("DELETE FROM user_role WHERE user_id=?", u.getId());
     }
 
+    @Override
+    @Transactional
+    public boolean enable(int id, boolean isEnable) {
+        return jdbcTemplate.update("UPDATE users SET enabled=? WHERE id=?", isEnable, id) != 0;
+    }
+
     private User setRoles(User u) {
         if (u != null) {
             List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_role  WHERE user_id=?", Role.class, u.getId());

@@ -51,13 +51,15 @@ $(function () {
 function enable(element) {
     let row = element.closest("tr");
     let id = row.attr("id");
-    let enabled = element.is(":checked") ? "true" : "false";
+    let enabled = element.is(":checked");
     $.ajax({
         type: "POST",
         url: userAjaxUrl + id,
         data: "enabled=" + enabled
     }).done(function () {
-        ctx.updateTable();
-        enabled ? successNoty("Enable") : successNoty("Disable");
+        row.attr("user-enabled", enabled);
+        enabled ? successNoty("Disable") : successNoty("Enable");
+    }).fail(function () {
+        $(element).prop("checked", !enabled);
     });
 }
