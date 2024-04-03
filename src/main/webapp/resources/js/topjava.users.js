@@ -58,7 +58,7 @@ function enable(element) {
         data: "enabled=" + enabled
     }).done(function () {
         row.attr("user-enabled", enabled);
-        enabled ? successNoty("Disable") : successNoty("Enable");
+        enabled ? successNoty("Enable") : successNoty("Disable");
     }).fail(function () {
         $(element).prop("checked", !enabled);
     });
