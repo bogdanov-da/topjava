@@ -7,12 +7,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
+
 public class DateTimeFormatters {
     public static class LocalDateFormatter implements Formatter<LocalDate> {
 
         @Override
         public LocalDate parse(String text, Locale locale) {
-            return LocalDate.parse(text);
+            return parseLocalDate(text);
         }
 
         @Override
@@ -25,7 +28,7 @@ public class DateTimeFormatters {
 
         @Override
         public LocalTime parse(String text, Locale locale) {
-            return LocalTime.parse(text);
+            return parseLocalTime(text);
         }
 
         @Override

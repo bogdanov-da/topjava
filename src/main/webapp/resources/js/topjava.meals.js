@@ -18,54 +18,94 @@ function clearFilter() {
 }
 
 $(function () {
-    makeEditable(
-        $("#datatable").DataTable({
-            "paging": false,
-            "info": true,
-            "columns": [
-                {
-                    "data": "dateTime"
-                },
-                {
-                    "data": "description"
-                },
-                {
-                    "data": "calories"
-                },
-                {
-                    "defaultContent": "Edit",
-                    "orderable": false,
-                    "render": renderEditBtn
-                },
-                {
-                    "defaultContent": "Delete",
-                    "orderable": false,
-                    "render": renderDeleteBtn
+    makeEditable({
+        "columns": [
+            {
+                "data": "dateTime",
+                "render": function (date, type, row) {
+                    if (type === 'display') {
+                        return date.replace('T', ' ').substr(0, 16);
+                    }
+                    return date;
                 }
-            ],
-            "order": [
-                [
-                    0,
-                    "desc"
-                ]
-            ],
-            "createdRow": function (row, data, dataIndex) {
-                $(row).attr("data-meal-excess", data.excess);
             },
-        })
-    );
-});
-
-$.ajaxSetup({
-    converters: {
-        "text json": function (stringData) {
-            var json = JSON.parse(stringData);
-            if (typeof json === 'object') {
-                $(json).each(function () {
-                    this.dateTime = this.dateTime.substr(0, 16).replace('T', ' ');
-                });
+            {
+                "data": "description"
+            },
+            {
+                "data": "calories"
+            },
+            {
+                "render": renderEditBtn,
+                "defaultContent": "",
+                "orderable": false
+            },
+            {
+                "render": renderDeleteBtn,
+                "defaultContent": "",
+                "orderable": false
             }
-            return json;
+        ],
+        "order": [
+            [
+                0,
+                "desc"
+            ]
+        ],
+        "createdRow": function (row, data, dataIndex) {
+            $(row).attr("data-meal-excess", data.excess);
+        },
+    });
+
+    const startDate = $('#startDate');
+    const endDate = $('#endDate');
+
+    startDate.datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d',
+        formatDate: 'Y-m-d',
+        onShow: function (ct) {
+            this.setOptions({
+                maxDate: endDate.val() ? endDate.val() : false
+            })
         }
-    }
+    });
+
+    endDate.datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d',
+        formatDate: 'Y-m-d',
+        onShow: function (ct) {
+            this.setOptions({
+                minDate: startDate.val() ? startDate.val() : false
+            })
+        }
+    });
+
+    const startTime = $('#startTime');
+    const endTime = $('#endTime');
+
+    startTime.datetimepicker({
+        datepicker: false,
+        format: 'H:i',
+        onShow: function (ct) {
+            this.setOptions({
+                maxTime: endTime.val() ? endTime.val() : false
+            })
+        }
+    });
+
+    endTime.datetimepicker({
+        datepicker: false,
+        format: 'H:i',
+        onShow: function (ct) {
+            this.setOptions({
+                minTime: startTime.val() ? startTime.val() : false
+            })
+        }
+    });
+
+    $('#dateTime').datetimepicker({
+        format: 'Y-m-d H:i'
+    });
 });

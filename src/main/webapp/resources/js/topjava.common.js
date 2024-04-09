@@ -1,7 +1,17 @@
 let form;
 
-function makeEditable(datatableApi) {
-    ctx.datatableApi = datatableApi;
+function makeEditable(options) {
+    ctx.datatableApi = $("#datatable").DataTable(
+        $.extend(true, options,
+            {
+                "ajax": {
+                    "url": ctx.ajaxUrl,
+                    "dataSrc": ""
+                },
+                "paging": false,
+                "info": true
+            }
+        ));
     form = $('#detailsForm');
 
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
@@ -23,7 +33,7 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            form.find("input[name='" + key + "']").val(value);
+            form.find("input[name='" + key + "']").val( key === "dateTime" ? value.replace('T', ' ').substr(0, 16) : value);
         });
         $('#editRow').modal();
     });

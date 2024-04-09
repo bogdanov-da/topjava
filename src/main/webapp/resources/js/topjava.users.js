@@ -27,12 +27,6 @@ function enable(chkbox, id) {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
-            "ajax": {
-                "url": userAjaxUrl,
-                "dataSrc": ""
-            },
-            "paging": false,
-            "info": true,
             "columns": [
                 {
                     "data": "name"
