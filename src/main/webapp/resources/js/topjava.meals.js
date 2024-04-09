@@ -34,11 +34,13 @@ $(function () {
                 },
                 {
                     "defaultContent": "Edit",
-                    "orderable": false
+                    "orderable": false,
+                    "render": renderEditBtn
                 },
                 {
                     "defaultContent": "Delete",
-                    "orderable": false
+                    "orderable": false,
+                    "render": renderDeleteBtn
                 }
             ],
             "order": [
@@ -49,4 +51,18 @@ $(function () {
             ]
         })
     );
+});
+
+$.ajaxSetup({
+    converters: {
+        "text json": function (stringData) {
+            var json = JSON.parse(stringData);
+            if (typeof json === 'object') {
+                $(json).each(function () {
+                    this.dateTime = this.dateTime.substr(0, 16).replace('T', ' ');
+                });
+            }
+            return json;
+        }
+    }
 });
