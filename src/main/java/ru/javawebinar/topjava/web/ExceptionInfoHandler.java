@@ -2,9 +2,6 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -56,9 +53,9 @@ public class ExceptionInfoHandler {
         if (rootMessage != null) {
             for (Map.Entry<String, String> entry : Map.of(
                     "users_unique_email_idx", DUPLICATE_EMAIL_EXCEPTION,
-                    "meals_unique_user_datetime_idx", "exception.meal.duplicateDateTime").entrySet()) {
+                    "meal_unique_user_datetime_idx", "exception.meal.duplicateDateTime").entrySet()) {
                 if (rootMessage.toLowerCase().contains(entry.getKey())) {
-                    return new ErrorInfo(req.getRequestURL(),VALIDATION_ERROR, messageSourceAccessor.getMessage(entry.getValue()));
+                    return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, messageSourceAccessor.getMessage(entry.getValue()));
                 }
             }
         }
@@ -69,8 +66,8 @@ public class ExceptionInfoHandler {
     @ExceptionHandler({BindException.class, IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
-        if(e instanceof BindException) {
-            BindingResult bindingResult = ((BindException)e).getBindingResult();
+        if (e instanceof BindException) {
+            BindingResult bindingResult = ((BindException) e).getBindingResult();
             return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, formatBindingResult(bindingResult));
         }
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
