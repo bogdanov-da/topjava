@@ -34,6 +34,7 @@ public class ExceptionInfoHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
     private final MessageSourceAccessor messageSourceAccessor;
     public static final String DUPLICATE_EMAIL_EXCEPTION = "exception.user.duplicateEmail";
+    public static final String DUPLICATE_DATETIME_EXCEPTION = "exception.meal.duplicateDateTime";
 
     public ExceptionInfoHandler(MessageSourceAccessor messageSourceAccessor) {
         this.messageSourceAccessor = messageSourceAccessor;
@@ -53,7 +54,7 @@ public class ExceptionInfoHandler {
         if (rootMessage != null) {
             for (Map.Entry<String, String> entry : Map.of(
                     "users_unique_email_idx", DUPLICATE_EMAIL_EXCEPTION,
-                    "meal_unique_user_datetime_idx", "exception.meal.duplicateDateTime").entrySet()) {
+                    "meal_unique_user_datetime_idx", DUPLICATE_DATETIME_EXCEPTION).entrySet()) {
                 if (rootMessage.toLowerCase().contains(entry.getKey())) {
                     return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, messageSourceAccessor.getMessage(entry.getValue()));
                 }
