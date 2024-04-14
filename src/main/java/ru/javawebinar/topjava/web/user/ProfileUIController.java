@@ -36,7 +36,7 @@ public class ProfileUIController extends AbstractUserController {
             return "redirect:/meals";
         } catch (DataIntegrityViolationException ex) {
             result.rejectValue("email", DUPLICATE_EMAIL_EXCEPTION);
-            return "redirect:/meals";
+            return "profile";
         }
     }
 
