@@ -72,7 +72,7 @@ public abstract class AbstractControllerTest {
     }
 
     protected ResultMatcher matchJsonDetail(String code) {
-        return jsonPath("$.detail").value(messageSourceAccessor.getMessage(code, new Locale("ru")));
+        return jsonPath("$.details").value(messageSourceAccessor.getMessage(code, new Locale("ru")));
     }
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

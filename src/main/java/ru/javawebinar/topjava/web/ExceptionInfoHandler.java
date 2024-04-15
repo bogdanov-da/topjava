@@ -42,7 +42,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
     public ErrorInfo notFoundError(HttpServletRequest req, NotFoundException e) {
-        return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
+        return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND, messageSourceAccessor.getMessage("exception.notFound"));
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
@@ -54,44 +54,50 @@ public class ExceptionInfoHandler {
                     "users_unique_email_idx", DUPLICATE_EMAIL_EXCEPTION,
                     "meal_unique_user_datetime_idx", DUPLICATE_DATETIME_EXCEPTION).entrySet()) {
                 if (rootMessage.toLowerCase().contains(entry.getKey())) {
-                    return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, messageSourceAccessor.getMessage(entry.getValue()));
+                    return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, messageSourceAccessor.getMessage("exception.validation"),
+                            new String[]{messageSourceAccessor.getMessage(entry.getValue())});
                 }
             }
         }
-        return logAndGetErrorInfo(req, e, true, DATA_ERROR);
+        return logAndGetErrorInfo(req, e, true, DATA_ERROR, messageSourceAccessor.getMessage("exception.validation"));
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler(BindException.class)
     public ErrorInfo bindValidationError(HttpServletRequest req, BindException e) {
+        String objectName = e.getObjectName();
+        objectName = "userTo".equals(objectName) ? "user" : objectName;
+        String finalObjectName = objectName;
         String[] details = e.getBindingResult().getFieldErrors().stream()
-                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                .toArray(String[]::new);
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, details);
+                .map(fe -> String.format("[%s] %s", messageSourceAccessor.getMessage(finalObjectName + "." + fe.getField()),
+                        fe.getDefaultMessage())).toArray(String[]::new);
+        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR,
+                messageSourceAccessor.getMessage("exception.validation"), details);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
-    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, messageSourceAccessor.getMessage("exception.validation"));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorInfo internalError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, true, APP_ERROR);
+        return logAndGetErrorInfo(req, e, true, APP_ERROR, messageSourceAccessor.getMessage("exception.internalError"));
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException,
-                                                ErrorType errorType, String... details) {
+                                                ErrorType errorType, String typeMessage, String... details) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
         if (logException) {
             log.error(errorType + " at request " + req.getRequestURL(), rootCause);
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
-        return new ErrorInfo(req.getRequestURL(), errorType,
+        return new ErrorInfo(req.getRequestURL(), errorType, typeMessage,
                 details.length != 0 ? details : new String[]{getLocalMessage(rootCause)});
     }
 

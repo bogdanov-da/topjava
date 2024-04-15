@@ -116,7 +116,19 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void updateDuplicate() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
-                .content(JsonUtil.writeValue(new UserTo(null, "no Name", "admin@gmail.com",
+                .content(JsonUtil.writeValue(new UserTo(null, "no Name", admin.getEmail(),
+                        "pas1234", 1000))))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(matchJsonType())
+                .andExpect(matchJsonDetail(DUPLICATE_EMAIL_EXCEPTION));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createDuplicate() throws Exception {
+        perform(MockMvcRequestBuilders.post(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(new UserTo(null, "no Name", user.getEmail(),
                         "pas1234", 1000))))
                 .andDo(print())
                 .andExpect(status().isConflict())

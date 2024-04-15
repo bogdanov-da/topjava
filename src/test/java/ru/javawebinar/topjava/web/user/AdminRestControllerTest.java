@@ -178,7 +178,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         User updated = new User(user);
-        updated.setEmail("admin@gmail.com");
+        updated.setEmail(admin.getEmail());
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
@@ -195,7 +195,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(jsonWithPassword(new User(null, "New", "user@yandex.ru", NEW_PASSWORD,
+                .content(jsonWithPassword(new User(null, "New", user.getEmail(), NEW_PASSWORD,
                         2300, Role.USER, Role.ADMIN), NEW_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isConflict())
